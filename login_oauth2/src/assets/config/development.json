@@ -1,0 +1,7 @@
+{
+  "api": {
+    "baseUrl": "https://localhost:2002/api"
+  },
+  "projectTitle": "Đăng nhập",
+  "favicon": "assets/images/favicon.ico"
+}

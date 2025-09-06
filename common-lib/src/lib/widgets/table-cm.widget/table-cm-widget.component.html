@@ -1,0 +1,191 @@
+<!-- <div [ngClass]="{ 'search-table': isShowSearch, 'not-search-table': !isShowSearch }"> -->
+  <p-table #dt
+  [value]="data"
+  responsiveLayout="scroll"
+  [lazy]="lazy"
+  (onLazyLoad)="onLazyLoad($event)"
+[rows]="filterData.pageSize"
+ [rowsPerPageOptions]="[40, 60, 80]"
+  [showGridlines]="true"
+  [totalRecords]="total"
+currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords}"
+  [selectionMode]="selectionMode"
+  [(selection)]="selectedItem"
+  [styleClass]="tableStyleClass + ' m-table'" [rowHover]="true" [dataKey]="dataKey"
+  [scrollable]="true" [loading]="loading"
+[scrollHeight]="(calcHeightType == 'relative') ? 'calc(100vh - ' + calcHeight + calcHeightUnit + ')' : ((calcHeightType == 'ignore') ? '' : (calcHeight + calcHeightUnit))"
+  [showCurrentPageReport]="showCurrentPageReport"
+  [paginator]="paginator"
+[class]="(!showPaging && !customFooterTemplate) ? 'tbl-simple' : ''"
+  [contextMenu]="cm" [(contextMenuSelection)]="menuContextItem"
+  (onContextMenuSelect)="onContextMenu.emit($event)" [(first)]="filterData.first"
+  [resizableColumns]="resizableColumns" [columnResizeMode]="columnResizeMode"
+
+  [lazyLoadOnInit]="lazyLoadOnInit"
+
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <!-- Dòng STT -->
+      <th *ngIf="showNumberColumn" style="width: 3rem" class="text-center justify-content-around flex-none" pFrozenColumn alignFrozen="left" pResizableColumn>
+        STT <i *ngIf="showFilterColumn" class="pi ml-2 cursor-pointer" [ngClass]="{'pi-filter': !showSearchBar, 'pi-filter-slash' : showSearchBar }" ></i>
+        <!-- (click)="actionSearchBar()" -->
+      </th>
+
+      <!-- Header tuỳ biến Default, Custom, ... -->
+      <ng-template #defaultHeaderTemplate>
+        <!-- <ng-container *ngIf="showSort">
+          <th pResizableColumn class="text-{{col['align'] || 'left'}} white-space-normal"
+          *ngFor="let col of cols; let i = index" [style.minWidth]="col['width']">
+          <div (click)="handleSort(col.fieldSort || col.field)"
+          [class]="((col.fieldSort || col.field) == inputFilter.sortField) ? 'text-primary' : 'text-800'">
+            <span>{{ col["header"] }}</span>
+            <span *ngIf="sortOderIndex == 0 && ((col.fieldSort || col.field) == inputFilter.sortField)" class="pi pi-sort-amount-up ml-2"></span>
+            <span *ngIf="sortOderIndex == 1 && ((col.fieldSort || col.field) == inputFilter.sortField)" class="pi pi-sort-amount-down ml-2"></span>
+            <span *ngIf="(sortOderIndex == 2 || !((col.fieldSort || col.field) == inputFilter.sortField)) && col.fieldSort != 'noSort' " class="pi pi-sort-alt ml-2"></span>
+          </div>
+          </th>
+        </ng-container> -->
+        <!-- *ngIf="!showSort" -->
+        <ng-container >
+          <th pResizableColumn class="text-{{col['align'] || 'left'}} white-space-normal" *ngFor="let col of cols; let i = index" [style.minWidth]="col['width']" >
+          <span>{{ col["header"] }}
+          </span>
+          </th>
+        </ng-container>
+
+        <th *ngIf="showActionButton" [style.width]="actionColWidth" pFrozenColumn alignFrozen="right">Thao tác</th>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="customHeaderTemplate ? customHeaderTemplate : defaultHeaderTemplate"></ng-container>
+    </tr>
+    <tr *ngIf="showSearchBar" >
+      <th style="width: 3rem" class="text-center justify-content-around flex-none p-0" pFrozenColumn alignFrozen="left">
+        <button pButton label="Xóa" class="p-button-outlined" icon="pi pi-eraser" (click)="clearAll()"></button>
+      </th>
+      <!-- <th *ngIf="isShowCheckBoxAll" [style.minWidth]="'3.2rem'" [style.maxWidth]="'4rem'" class="frozen-col sticky-position sticky-position-checkbox"></th> -->
+      <th [style.minWidth]="col['width'] || '12rem'" *ngFor="let col of cols; let i = index;" >
+        <div class="p-input-icon-right w-full p-fluid">
+          <i *ngIf="inputFilter.dataSearch[col['field']] && col.type != 'dateRange'" class="pi pi-times" (click)="clearInput(col['field'])"></i>
+          <!-- <i *ngIf="this.mapDateToDate[col['field']] && col.type == 'dateRange'" class="pi pi-times" (click)="onClearDateToDate(col['field'])"></i> -->
+          <!-- Trường hợp khác -->
+          <input *ngIf="col.type !== 'dropdown' && col.type !== 'multiSelect' && col.type !== 'date' && col.type !== 'dateRange'"
+            (keydown.enter)="onFilter(inputFilter)" pInputText type="text" [(ngModel)]="inputFilter.dataSearch[col['field']]"
+            class="w-full p-inputtext-sm text-base font-normal" />
+          <!-- Dropdown -->
+          <p-dropdown *ngIf="col.type === 'dropdown'" appendTo="body" (onChange)="onFilter(inputFilter)" [panelStyle]="{'max-width': '450px'}" [style]="{'max-width': '450px'}"
+            [(ngModel)]="inputFilter.dataSearch[col['field']]" [options]="col.dropdown" optionLabel="name" optionValue="value"
+          ></p-dropdown>
+          <!-- Calender -->
+          <p-calendar *ngIf="col.type === 'date'" [(ngModel)]="inputFilter.dataSearch[col['field']]" appendTo="body" [showClear]="inputFilter.dataSearch[col['field']]"
+            (onSelect)="onDateFilter([col['field']], $event)" (onClear)="clearInput(col['field'])" dateFormat="dd/mm/yy" />
+          <!-- Dropdown chọn nhiều -->
+          <p-multiSelect *ngIf="col.type === 'multiSelect'" (onChange)="onFilter(inputFilter)" [options]="col.dropdown"
+            [(ngModel)]="inputFilter.dataSearch[col['field']]" optionLabel="name" optionValue="value" [panelStyle]="{'max-width': '300px'}" [style]="{'max-width': '300px'}"
+            appendTo="body"
+            [filter]="true" filterBy="name"
+          >
+          </p-multiSelect>
+          <!-- Calender từ ngày đến ngày -->
+          <!-- <div *ngIf="col.type === 'dateRange'">
+            <input type="text" pInputText (click)="op.toggle($event)" [readonly]="true" [value]="this.mapDateToDate[col['field']] || ''"/>
+            <p-overlayPanel #op>
+              <ng-template pTemplate="content">
+                  <div class="flex justify-content-between align-items-center">
+                    <span class="w-2">Từ</span>
+                    <p-calendar appendTo="body" dateFormat="dd/mm/yy" [(ngModel)]="inputFilter.dataSearch[col['field']+'Start']"
+                      placeholder="Từ ngày..."
+                      [maxDate]="inputFilter.dataSearch[col['field']+'End']"
+                      (onSelect)="getValueDateToDate(col['field'])"
+                      [showClear]="true" (onClear)="onSearchDateToDate(col['field'])"/>
+                  </div>
+                  <div class="flex justify-content-between align-items-center mt-2">
+                    <span class="w-2">đến</span>
+                    <p-calendar appendTo="body" dateFormat="dd/mm/yy" [(ngModel)]="inputFilter.dataSearch[col['field']+'End']"
+                      placeholder="Đến ngày..."
+                      (onSelect)="getValueDateToDate(col['field'])"
+                      [minDate]="inputFilter.dataSearch[col['field']+'Start']"
+                      [showClear]="true" (onClear)="onSearchDateToDate(col['field'])"/>
+                  </div>
+                  <div class="text-right mt-2">
+                    <button pButton class="p-button-outlined" icon="pi pi-times" (click)="onClearDateToDate(col['field'])"></button>
+                    <button pButton class="ml-2" icon="pi pi-search" (click)="onSearchDateToDate(col['field']); op.hide()"></button>
+                  </div>
+              </ng-template>
+            </p-overlayPanel>
+           </div> -->
+        </div>
+      </th>
+      <th *ngIf="showActionButton || hasCustomActionButton" pFrozenColumn alignFrozen="right"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+    <!-- *ngIf="!menuItems.length"  -->
+    <tr [pSelectableRow]="rowData" (mouseenter)="onHover.emit(rowData)" (mouseleave)="onLeave.emit(rowData)"
+      class="bg-{{rowData?.colorRow}}-400"
+      >
+      <td *ngIf="showNumberColumn" style="width: 3rem" class="text-center justify-content-around flex-none" pFrozenColumn alignFrozen="left">
+        {{ rowIndex + 1 }}
+      </td>
+      <!-- Phần chứa dữ liệu trong bảng -->
+      <ng-template #defaultTemplate>
+        <td [style.minWidth]="col.width || '12rem'" *ngFor="let col of cols" class="text-{{col['align'] || 'left'}} justify-content-center">
+          <span *ngIf="col['type'] === 'date'">{{ rowData[col['field']] | date: 'dd/MM/yyyy'}}</span>
+          <span *ngIf="col['type'] === 'price'">{{ rowData[col['field']] | number: '1.0-0'}}</span>
+          <span >{{ rowData[col['field']]}}</span>
+        </td>
+
+        <!-- Khối Edit và Delete một dòng dữ liệu -->
+        <td *ngIf="showActionButton" [style.width]="actionColWidth" pFrozenColumn alignFrozen="right"
+            class="flex justify-content-center">
+          <div class="flex mx-1" class="flex justify-content-center">
+            <button *ngIf="actions.includes(ACTIONS.EDIT)" pButton pRipple icon="pi pi-pencil"
+                    class="ml-auto p-button-success ml-2 mr-2 p-button-xs" (click)="onEditItem.emit(rowData)"
+                    title="Edit row"></button>
+            <button *ngIf="actions.includes(ACTIONS.DELETE)" pButton pRipple icon="pi pi-trash"
+                    class="p-button-warning p-button-xs" (click)="onDeleteItem.emit(rowData)"
+                    title="Delete row"></button>
+            <ng-container *ngTemplateOutlet="additionButtonsTemplate; context: { $implicit: rowData }"></ng-container>
+          </div>
+        </td>
+      </ng-template>
+      <ng-container
+        *ngTemplateOutlet="customBodyTemplate ? customBodyTemplate : defaultTemplate; context: { $implicit: rowData,rowgroup:rowgroup, rowspan:rowspan}"></ng-container>
+    </tr>
+    <!-- <tr *ngIf="menuItems.length" [pSelectableRow]="rowData" (mouseenter)="onHover.emit(rowData)" (mouseleave)="onLeave.emit(rowData)" [pContextMenuRow]="rowData">
+      <td style="width: 3rem" class="text-center justify-content-around flex-none" pFrozenColumn alignFrozen="left">
+        {{ rowIndex + 1 }}
+      </td>
+      <ng-template #defaultTemplate>
+        <td [style.minWidth]="col.width || '12rem'" *ngFor="let col of cols" class="justify-content-center">
+          {{ rowData[col['field']] }}
+        </td>
+
+        <td *ngIf="showActionButton" [style.minWidth]="actionColWidth" pFrozenColumn alignFrozen="right"
+          class="flex justify-content-center">
+          <div class="flex mx-1" class="flex justify-content-center">
+            <button *ngIf="actions.includes(ACTIONS.EDIT)" pButton pRipple icon="pi pi-pencil"
+              class="ml-auto p-button-rounded p-button-success ml-2 mr-2 p-button-xs" (click)="onEditItem.emit(rowData)"
+              title="Edit row"></button>
+            <button *ngIf="actions.includes(ACTIONS.DELETE)" pButton pRipple icon="pi pi-trash"
+              class="p-button-rounded p-button-warning p-button-xs" (click)="onDeleteItem.emit(rowData)"
+              title="Delete row"></button>
+            <ng-container *ngTemplateOutlet="additionButtonsTemplate; context: { $implicit: rowData }"></ng-container>
+          </div>
+        </td>
+      </ng-template>
+      <ng-container
+        *ngTemplateOutlet="customBodyTemplate ? customBodyTemplate : defaultTemplate; context: { $implicit: rowData }"></ng-container>
+    </tr> -->
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage" let-columns>
+    <div class="msg-no-data">Không có dữ liệu</div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <ng-container *ngTemplateOutlet="customFooterTemplate"></ng-container>
+    </tr>
+  </ng-template>
+</p-table>
+<p-contextMenu #cm [model]="menuItems" [triggerEvent]="'click'"> </p-contextMenu>
