@@ -1,0 +1,5 @@
+:host ::ng-deep .p-picklist {
+  .p-listbox-list-container, .p-listbox-list, .p-listbox-empty-message{
+    min-height: 30rem !important;
+  }
+}

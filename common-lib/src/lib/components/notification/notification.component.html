@@ -1,8 +1,8 @@
 <p-toast [style]="{'white-space': 'pre-line'}" [position]="position" [key]="key" [baseZIndex]="5000"
   [showTransformOptions]="'translateX(100%)'" [hideTransformOptions]="'translateX(-100%)'" [autoZIndex]="true">
   <ng-template let-message pTemplate="message">
-    <div class="p-flex p-flex-column" style="flex: 1">
-      <div class="grid p-fluid">
+    <div class="flex" style="flex: 1">
+      <!-- <div class="grid p-fluid"> -->
         <div class="col-2 flex align-center">
           <i class="pi pi-bell" style="font-size: 2rem"></i>
         </div>
@@ -10,7 +10,7 @@
           <div class="font-bold" style="font-size: 1.25rem">{{message.summary}}</div>
           <p>{{message.detail}}</p>
         </div>
-      </div>
+      <!-- </div> -->
     </div>
   </ng-template>
 </p-toast>

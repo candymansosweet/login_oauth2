@@ -1,0 +1,59 @@
+::ng-deep {
+  .custom-dropdown {
+    .p-dropdown {
+      width: 100% !important;
+    }
+  }
+
+  .msg-no-data {
+    position: sticky;
+    padding-top: 10px;
+    left: 46%;
+    width: 150px;
+    text-align: center;
+    display: block;
+    /*margin-left: 15px;*/
+  }
+
+  p-table tbody tr:last-child td {
+    border-bottom-width: 1px !important;
+  }
+
+  p-table tr td div,
+  p-table tr td {
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+  }
+
+  .p-datatable {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .p-datatable-table-container {
+    height: 100%;
+  }
+
+  .p-paginator.p-component {
+    justify-content: end;
+  }
+
+  .p-overlay-mask {
+    position: absolute !important;
+  }
+}
+
+.p-datatable-wrapper {
+  /*min-height: 200px;*/
+}
+
+.bg-brown-400 {
+  background-color: #852e2e8c !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.sticky-position-checkbox {
+  left: 5.5rem;
+}

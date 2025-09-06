@@ -1,8 +1,8 @@
 export interface InputFilter {
-  pageNumber: number,
+  pageNo: number,
   pageSize: number,
   first : number,
   sortField? : string,
   sortOrder? : string,
-  dataSearch : any; 
+  dataSearch : any;
 }

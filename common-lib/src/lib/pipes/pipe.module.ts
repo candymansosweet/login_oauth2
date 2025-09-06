@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ArrayJoinTextPipe } from './array-join-text-pipe';
 import { RemoveHtmlTagPipe } from './remove-html-tag.pipe';
+import { GetValueByKeyPipe } from './get-value-by-key.pipe';
 
 @NgModule({
   declarations: [
@@ -9,11 +10,13 @@ import { RemoveHtmlTagPipe } from './remove-html-tag.pipe';
   imports: [
     CommonModule,
     ArrayJoinTextPipe,
-    RemoveHtmlTagPipe
+    RemoveHtmlTagPipe,
+    GetValueByKeyPipe,
   ],
   exports: [
     ArrayJoinTextPipe,
-    RemoveHtmlTagPipe
+    RemoveHtmlTagPipe,
+    GetValueByKeyPipe,
   ],
   providers: []
 })

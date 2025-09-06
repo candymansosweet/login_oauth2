@@ -1,1 +1,53 @@
-<p>application works!</p>
+<div class="bg-white rounded-lg shadow-md p-3">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
+    <h1 class="text-2xl font-bold text-gray-800">Danh sách Location</h1>
+  </div>
+  <div class="flex mb-3">
+    <div class="flex flex-grow-1">
+      <div class="flex align-items-center mr-3 border-bottom-1">
+        <input type="text" style="border: none; outline: none; box-shadow: none;" placeholder="Nhập location" pInputText
+          [(ngModel)]="dataSearch.keyword" (ngModelChange)="onKeyupSearch()" />
+      </div>
+    </div>
+    <div class="flex flex-none">
+      <p-button label="Thêm mới" icon="pi pi-plus" styleClass="mt-3 sm:mt-0" (onClick)="onAdd()"></p-button>
+    </div>
+  </div>
+  <msc-table [isLazyLoad]="true" [cols]="cols" [items]="listStattion" [isChangeColumn]="isChangeColumn"
+    [target]="targetTable" [showSort]="true" [showFilterColumn]="false" [resizableColumns]="true"
+    [columnResizeMode]="'expand'" (onPageChange)="onPageChange($event)" [totalRecords]="total" [dataKey]="'id'"
+    [loading]="loading" [calcHeight]="210" (onSort)="onSort($event)" [customBodyTemplate]="customBodyTemplate" [showCheckBox]="false"
+    [sortFieldDefault]="paramsDefault.sortField" [sortOrderDefault]="paramsDefault.sortOrder">
+    <ng-template #customBodyTemplate let-rowData>
+      <td *ngFor="let col of cols" #columnElement [style.maxWidth]="col.width || '12rem'"
+        [style.minWidth]="col.width || '12rem'"
+        [style.color]="!rowData.status && (rowData.status | GetValueByKeyPipe : 'value' : 'color': stationStatus)"
+        class="justify-content-center overflow-hidden text-overflow-ellipsis">
+        <container-element [ngSwitch]="col.field">
+          <div *ngSwitchCase="'statusCodes'">
+            <div [style.color]="rowData.status | GetValueByKeyPipe : 'value' : 'color': stationStatus">
+              {{rowData.statusCodes | GetValueByKeyPipe : 'value' : 'name': stationStatus}}
+            </div>
+          </div>
+          <div *ngSwitchCase="'verified'">
+            {{rowData.consularLegal | GetValueByKeyPipe : 'value' : 'name': booleanStatus}}
+          </div>
+          <div *ngSwitchDefault>
+            <span class="white-space-normal">{{rowData[col.field]}}</span>
+          </div>
+        </container-element>
+      </td>
+      <td class="text-center" pFrozenColumn alignFrozen="right">
+        <i class="pi pi-pencil mr-2 cursor-pointer" style="color: #3B82F6" (click)="onEdit(rowData)"></i>
+        <i class="pi pi-trash cursor-pointer" style="color: #EF4444" (click)="onDelete(rowData)"></i>
+      </td>
+    </ng-template>
+  </msc-table>
+
+</div>
+
+<app-modal-location [(visible)]="showModal" [dataItem]="dataModal" [titleModal]="titleModal" (visibleChange)="onSearch()"></app-modal-location>
+
+<confirm-dialog [(visible)]="showConfirmDialog" [confirmText]="'Bạn có chắc chắn muốn xóa location này không?'"
+  (onConfirm)="onConfirmDelete()" (onCancel)="onCancelDelete()">
+</confirm-dialog>

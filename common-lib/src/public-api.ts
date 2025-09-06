@@ -17,7 +17,7 @@ export * from './lib/services/permission.service';
 export * from './lib/abstracts/service.abstract';
 
 // interception
-export * from './lib/directives/directive.module';
+export * from './lib/interceptors/custom-http.interceptor'
 
 // widget
 export * from './lib/widgets/table-cm.widget/table-cm-widget.component';

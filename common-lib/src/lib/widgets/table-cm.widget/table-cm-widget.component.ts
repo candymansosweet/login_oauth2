@@ -67,7 +67,7 @@ export class TableCmWidgetComponent {
   showSearchBar: boolean = false;
   @Input() customHeaderTemplate!: TemplateRef<any>;
   inputFilter: InputFilter = {
-    pageNumber: 1,
+    pageNo: 1,
     pageSize: 40,
     first: 0,
     sortField: undefined,
@@ -161,7 +161,7 @@ export class TableCmWidgetComponent {
 
   onFilter(inputFilter?: any) {
     this.inputFilter.first = 0;
-    this.inputFilter.pageNumber = 1;
+    this.inputFilter.pageNo = 1;
     // this.mscTableService.setFilter(this.target,this.inputFilter);
     let processedData = this.convertDataFilter(this.inputFilter);
 
@@ -184,7 +184,7 @@ export class TableCmWidgetComponent {
       }
     }
     return ({
-      pageNumber: this.inputFilter.pageNumber,
+      pageNo: this.inputFilter.pageNo,
       pageSize: this.inputFilter.pageSize,
       sortField: this.inputFilter.sortField,
       sortOrder: this.inputFilter.sortOrder,
@@ -195,14 +195,14 @@ export class TableCmWidgetComponent {
     this.inputFilter.dataSearch = {};
     // this.mscTableService.clearFilter(this.target);
     this.inputFilter.first = 0;
-    this.inputFilter.pageNumber = 1;
+    this.inputFilter.pageNo = 1;
     let processedData = this.convertDataFilter(this.inputFilter);
     this.onSearchFilter.emit(processedData);
   }
   clearInput(data: any) {
     this.inputFilter.dataSearch[data] = '';
     this.inputFilter.first = 0;
-    this.inputFilter.pageNumber = 1;
+    this.inputFilter.pageNo = 1;
     // this.mscTableService.setFilter(this.target,this.inputFilter);
     let processedData = this.convertDataFilter(this.inputFilter);
 
